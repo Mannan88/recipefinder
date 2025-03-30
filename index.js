@@ -9,7 +9,6 @@ import { Strategy } from 'passport-local';
 
 const app = express();
 const port = 3000;
-const saltRounds = 10;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
@@ -49,19 +48,14 @@ app.get('/register', (req, res) => {
 
 app.get('/home', (req, res) => {
     res.render('home.ejs');
-});
+        })
 
 app.get('/about-us', (req, res) => {
     res.render('about.ejs');
 });
 
 app.get('/recipe', (req, res) => {
-    if (req.isAuthenticated()){
-        res.render('recipe.ejs');
-    }   
-    else {
-        res.redirect('/login');
-    }
+    res.render('recipe.ejs');
 });
 
 app.post('/login', (req, res) => {
@@ -128,6 +122,8 @@ passport.use(new Strategy(async function verify(email,password, cb ) {
     }
 }))
 
+
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
+

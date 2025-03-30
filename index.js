@@ -10,6 +10,8 @@ import { Strategy } from 'passport-local';
 const app = express();
 const port = 3000;
 
+env.config();
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
@@ -111,16 +113,28 @@ passport.use(new Strategy(async function verify(email,password, cb ) {
     try {
         const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
         if (result.rows.length > 0) {
-            
-
+            const user = result.rows[0];
+            bcrypt.compare(password, user.password, (err, result) => {
+                if (err) {
+                    return cb(err);
+                }
+                else{
+                    if (result) {
+                        return cb(null, user);
+                    }
+                    else {
+                        return cb(null, false);
+                    }
+                }
+            })
         }
         else{
-            await db.query('INSERT INTO users (email, password) VALUES ($1, $2', [email, password]);
+            return cb("User not found");
         }
     } catch (error) {
         cb(error);
     }
-}))
+}));
 
 
 app.listen(port, () => {

@@ -111,7 +111,7 @@ passport.use(new Strategy(async function verify(email,password, cb ) {
     try {
         const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
         if (result.rows.length > 0) {
-
+            
 
         }
         else{

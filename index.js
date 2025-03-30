@@ -9,6 +9,7 @@ import { Strategy } from 'passport-local';
 
 const app = express();
 const port = 3000;
+const saltRounds = 10;
 
 env.config();
 
@@ -60,9 +61,10 @@ app.get('/recipe', (req, res) => {
     res.render('recipe.ejs');
 });
 
-app.post('/login', (req, res) => {
-
-});
+app.post('/login', passport.authenticate("local", {
+    successRedirect: "/home",
+    failureRedirect: "/login",
+}));
 
 app.post('/register', async (req, res) => {
     const userEmail = req.body.email;
@@ -135,6 +137,14 @@ passport.use(new Strategy(async function verify(email,password, cb ) {
         cb(error);
     }
 }));
+
+passport.serializeUser((user, cb) => {
+    cb(null, user);
+})
+
+passport.deserializeUser((user, cb) => {
+    cb(null, user);
+})
 
 
 app.listen(port, () => {

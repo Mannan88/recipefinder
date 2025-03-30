@@ -14,6 +14,7 @@ app.use(express.static('public'));
 
 app.get('/', (req, res) => {
     res.render('main.ejs');
+    console.log("demo");
 });
 
 app.get('/login', (req, res) => {

@@ -115,7 +115,7 @@ app.post('/searchByRecipe', (req, res) => {
 
 });
 
-passport.use(new Strategy({ usernameField: 'email', passwordField: 'password' }, async function verify(email, password, cb ) {
+passport.use(new Strategy({ usernameField: 'email', passwordField: 'password' }, async function verify(email, password, cb ) { // customize the field names to match your form
     try {
         console.log('passport-local strategy triggered');
         console.log('email:', email);

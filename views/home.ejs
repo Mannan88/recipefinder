@@ -3,21 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Recipe Finder</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>List of Ingredients</h1>
 
-    <% if (typeof ingredients !== "undefined" && ingredients.length > 0) { %>
-        <ul>
-            <% ingredients.forEach(ingredient => { %>
-                <li>
-                    <%= ingredient.strIngredient %>
-                </li>
-            <% }) %>
-        </ul>
-    <% } else { %>
-        <p>No ingredients found.</p>
-    <% } %>
+    <div class="container">
+     <div class="sideimage">
+        </div> 
+      
+        <div class="ingredients-section">
+            <div class="search-bar">
+                <input type="text" placeholder="Search Ingredients">
+            </div>
+         <div class="ingredients-list">
+            <button class="button">Honey</button>
+                <button class="button">Flour</button>
+                <button class="button">Baking Powder</button>
+                <button class="button">Butter</button>
+                <button class="button">Oil</button>
+                <button class="button">Eggs</button>
+                <button class="button">Salt</button>
+                <button class="button">Rice</button>
+                <button class="button">Onion</button>
+                <button class="button">Coriander</button>
+                <button class="button">Soya Sauce</button>
+                <button class="button">Vinegar</button>
+                <button class="button">Red Chilli Sauce</button>
+            </div>
+            <div class="fun-fact">
+                🍌 Botanically, bananas are berries because they are part of a flowering plant that contains seeds.
+            </div>
+        </div> 
+         
+        <div class="recipes-section">
+            <div class="search-bar">
+                <input type="text" placeholder="Search Recipes">
+            </div>
+            <div class="recipe-cards">
+                <div class="recipe-card">
+                    <img src="pancakes.jpg" alt="Pancakes">
+                    <p>PANCAKES</p>
+                </div>
+                <div class="recipe-card">
+                    <img src="omelette.jpg" alt="Omelette">
+                    <p>OMELETTE</p>
+                </div>
+                <div class="recipe-card">
+                    <img src="fried_rice.jpg" alt="Fried Rice">
+                    <p>FRIED RICE</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

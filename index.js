@@ -24,9 +24,10 @@ app.use(session({
         maxAge: 1000 * 60 * 60, // 1 hour
     }
 }));
+   
 
 app.use(passport.initialize());
-app.use(passport.session());    
+app.use(passport.session());
 
 const db = new pg.Client({
     user: process.env.PG_USER,
@@ -61,7 +62,10 @@ app.get('/recipe', (req, res) => {
     res.render('recipe.ejs');
 });
 
-app.post('/login', passport.authenticate("local", {
+app.post('/login', (req, res, next) => {
+    console.log('Login route triggered:', req.body);
+    next();
+}, passport.authenticate("local", {
     successRedirect: "/home",
     failureRedirect: "/login",
 }));
@@ -111,14 +115,18 @@ app.post('/searchByRecipe', (req, res) => {
 
 });
 
-passport.use(new Strategy(async function verify(email,password, cb ) {
+passport.use(new Strategy({ usernameField: 'email', passwordField: 'password' }, async function verify(email, password, cb ) {
     try {
+        console.log('passport-local strategy triggered');
+        console.log('email:', email);
         const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+        
         if (result.rows.length > 0) {
             const user = result.rows[0];
-            bcrypt.compare(password, user.password, (err, result) => {
+            const storedPassword = user.password;
+            bcrypt.compare(password, storedPassword, (err, result) => {
                 if (err) {
-                    return cb(err);
+                    console.error('Error comparing passwords:', err);
                 }
                 else{
                     if (result) {
@@ -128,15 +136,17 @@ passport.use(new Strategy(async function verify(email,password, cb ) {
                         return cb(null, false);
                     }
                 }
-            })
+            });
         }
         else{
             return cb("User not found");
         }
     } catch (error) {
-        cb(error);
+        console.log('Error querying database:', error);
+        return cb(error);
     }
 }));
+
 
 passport.serializeUser((user, cb) => {
     cb(null, user);

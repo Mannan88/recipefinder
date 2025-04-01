@@ -8,9 +8,26 @@
 </head>
 
 <body>
-    <div class="container">
-        
-       <h1>Recipe Page</h1>
+    <h1>Find Recipes with Ingredients</h1>
 
-    </div>
+    <!-- Form to add ingredients -->
+    <form action="/recipe" method="POST">
+        <label for="ingredients">Add Ingredients (comma-separated):</label>
+        <input type="text" id="ingredients" name="ingredients" placeholder="flour, milk, eggs" required>
+        <button type="submit">Search Recipes</button>
+    </form>
+
+    <% if (typeof recipes !== "undefined" && recipes.length > 0) { %>
+        <h2>Recipes</h2>
+        <ul>
+            <% recipes.forEach(recipe => { %>
+                <li>
+                    <h3><%= recipe.strMeal %></h3>
+                    <img src="<%= recipe.strMealThumb %>" alt="<%= recipe.strMeal %>" width="100">
+                </li>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <p>No recipes found.</p>
+    <% } %>
 </body>

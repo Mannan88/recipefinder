@@ -39,13 +39,9 @@ app.get('/', (req, res) => {
     res.render('main.ejs');
 });
 
-app.get('/login', (req, res) => {
-    res.render('login.ejs');
+app.get('/auth', (req, res) => {
+    res.render('auth.ejs');
 });
-
-app.get('/register', (req, res) => {
-    res.render('register.ejs');
-})
 
 app.get('/home', (req, res) => {
     res.render('home.ejs');
@@ -55,52 +51,70 @@ app.get('/about-us', (req, res) => {
     res.render('about.ejs');
 });
 
+
 app.get('/recipe', (req, res) => {
     res.render('recipe.ejs');
 });
 
-app.post('/login', (req, res, next) => {
-    console.log('Login route triggered:', req.body);
-    next();
-}, passport.authenticate("local", {
-    successRedirect: "/home",
-    failureRedirect: "/login",
-}));
 
-app.post('/register', async (req, res) => {
-    const userEmail = req.body.email;
-    const userPassword = req.body.password;
-    try {
-        const result = await db.query('SELECT * FROM users WHERE email = $1', [userEmail]);
-        if (result.rows.length === 0) {
-            bcrypt.hash(userPassword, saltRounds, async (error, hash) => {
-                if (error) {
-                    console.log('Error hashing password:', error);
-                    res.status(500).send('Server error');
+app.post('/auth', async (req, res, next) => {
+    const { action, email, password } = req.body;
+
+    if (action === "login") {
+        passport.authenticate("local", (err, user, info) => {
+            if (err) {
+                console.error("Error during authentication:", err);
+                return res.status(500).send("Server error");
+            }
+            if (!user) {
+                return res.redirect("/auth");
+            }
+            req.logIn(user, (err) => {
+                if (err) {
+                    console.error("Error logging in user:", err);
+                    return res.status(500).send("Server error");
                 }
-                else {
+                return res.redirect("/home"); 
+            });
+        })(req, res, next);
+    } 
+    
+    else if (action === "register") {
+        try {
+            const result = await db.query("SELECT * FROM users WHERE email = $1", [email]);
+
+            if (result.rows.length === 0) {
+                bcrypt.hash(password, saltRounds, async (error, hash) => {
+                    if (error) {
+                        console.error("Error hashing password:", error);
+                        return res.status(500).send("Server error");
+                    }
+
                     try {
-                        const result = await db.query('INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *', [userEmail, hash]);
-                        console.log('User registered:', result.rows[0]);
-                        req.login(result.rows[0], (err)=>{
+                        const newUser = await db.query("INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *", [email, hash]);
+                        req.login(newUser.rows[0], (err) => {
                             if (err) {
-                                console.log('Error logging in user:', err);
-                                res.status(500).send('Server error');
+                                console.error("Error logging in user:", err);
+                                return res.status(500).send("Server error");
                             }
-                            else {
-                                res.redirect('/home');
-                            }
-                        })
-                    } catch (error) {
-                        console.log('Error inserting user:', error);
-                        res.status(500).send('Server error');
-                    }  
-                }
-            })
+                            return res.redirect("/home");
+                        });
+                    } catch (insertError) {
+                        console.error("Error inserting user:", insertError);
+                        return res.status(500).send("Server error");
+                    }
+                });
+            } else {
+                return res.redirect("/register"); 
+            }
+        } catch (queryError) {
+            console.error("Error querying database:", queryError);
+            return res.status(500).send("Server error");
         }
-    } catch (error) {
-        console.log('Error querying database:', error);
-        res.status(500).send('Server error');
+    } 
+    
+    else {
+        return res.status(400).send("Invalid action");
     }
 });
 

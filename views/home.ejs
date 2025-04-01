@@ -102,8 +102,9 @@
                     recipes.forEach(recipe => {
                         recipesContainer.append(`
                             <div class="recipe-card">
+                              <a href="/recipe/${recipe.idMeal}">
                                 <img src="${recipe.strMealThumb}" alt="${recipe.strMeal}">
-                                <p>${recipe.strMeal}</p>
+                                <p>${recipe.strMeal}</p></a>
                             </div>
                         `);
                     });

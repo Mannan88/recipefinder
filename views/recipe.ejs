@@ -1,33 +1,67 @@
 <!DOCTYPE html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recipe</title>
-    <link rel="stylesheet" href="/styles/layout.css">
+    <title>Food Details</title>
+    <link rel="stylesheet" href="/recipe.css">
 </head>
 
 <body>
-    <h1>Find Recipes with Ingredients</h1>
+    <div class="container">
+    <div class="nav">
+        <h6 action="/home">Home </h6>
+        <h6>About Us</h6>
+        <h6>Services</h6>
+        <h6>Portfolio</h6>
+        <h6>Contact</h6>
+        <h6>Blog</h6>
+    </div>
+ 
+       <div class="foodDetails"> <div class="foodinfo">
+            <h2>
+                <%= recipe.strMeal %>
+            </h2>
+            <p><strong>Category:</strong>
+                <%= recipe.strCategory %>
+            </p>
+            <p><strong>Origin:</strong>
+                <%= recipe.strArea %>
+            </p>
+        </div>
+        <img src="<%= recipe.strMealThumb %>">
+        </div>
+        <div class="ingredients">
+            <h3>Ingredients:</h3>
+            <ul>
+                <% for(let i=1; i <=20; i++) { let ingredient=recipe['strIngredient' + i]; let
+                    measure=recipe['strMeasure' + i]; if (ingredient && ingredient.trim() !=='' ) { %>
+                    <li>
+                        <%= measure %>
+                            <%= ingredient %>
+                    </li>
+                    <% } } %>
+            </ul>
 
-    <!-- Form to add ingredients -->
-    <form action="/recipe" method="POST">
-        <label for="ingredients">Add Ingredients (comma-separated):</label>
-        <input type="text" id="ingredients" name="ingredients" placeholder="flour, milk, eggs" required>
-        <button type="submit">Search Recipes</button>
-    </form>
+        </div>
+        <div class="instructions">
+            <h3>Instructions</h3>
+            <p>
+                <%= recipe.strInstructions %>
+            </p>
+        </div>
 
-    <% if (typeof recipes !== "undefined" && recipes.length > 0) { %>
-        <h2>Recipes</h2>
-        <ul>
-            <% recipes.forEach(recipe => { %>
-                <li>
-                    <h3><%= recipe.strMeal %></h3>
-                    <img src="<%= recipe.strMealThumb %>" alt="<%= recipe.strMeal %>" width="100">
-                </li>
-            <% }) %>
-        </ul>
-    <% } else { %>
-        <p>No recipes found.</p>
-    <% } %>
+        <div class="yt">
+            <a href="<%= recipe.strYoutube %>" class="video-link" target="_blank">Watch on YouTube</a>
+        </div>
+
+        <div class="full-recipe">
+            <a href="<%= recipe.strSource %>" class="source-link" target="_blank">View Full Recipe</a>
+
+        </div>
+
+    </div>
 </body>
+
+</html>

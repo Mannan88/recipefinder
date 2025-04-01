@@ -1,0 +1,68 @@
+html, body {
+    margin: 0;  /* Remove margin */
+    padding: 0; /* Remove padding */
+    height: 100%; /* Ensure full height of the viewport */
+  }
+.container{
+    height: fit-content; 
+  margin: 2em auto;
+  padding-bottom:2em;
+  width:70%;
+}
+
+.nav{
+    color: #32333c;
+    font-size: 25px ;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    gap: 60px;
+   margin: 0;
+   padding: 0;
+  }
+
+.foodDetails{
+    display: flex;
+    justify-content: space-around;
+}
+.foodDetails img{
+    width:250px;
+    height:250px;
+}
+
+.foodinfo{
+    display: block;
+    grid-column:1/3 ;
+    align-content: center;
+    grid-row: 1/3;
+    justify-self: center;
+    margin-bottom: 10px;
+}
+
+.ingredients{
+    grid-column:1/3 ;
+    align-content: end;
+    grid-row: 2/3;
+    justify-self: center;
+    margin-left: 55px;
+}
+
+.instructions{
+    grid-column: 3/4;
+    grid-row: 2/3;
+    align-self: end;
+    justify-content: center;
+}
+
+.yt{
+    grid-column: 3/4;
+    grid-row: 3/4;
+    align-self: center;
+    justify-content: center;
+}
+.full-recipe{
+    grid-column: 2/3;
+    grid-row: 3/4;
+    align-self: center;
+    justify-content: center;
+}

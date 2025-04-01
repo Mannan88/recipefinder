@@ -48,14 +48,23 @@ app.get('/about-us', (req, res) => {
         res.redirect('/auth');
     }   
 });
+app.get('/recipe/:id', async (req, res) => {
+    const mealId = req.params.id;
+    try {
+        const response = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${mealId}`);
+        const data = await response.json();
 
-app.get('/recipe', (req, res) => {
-    if (req.isAuthenticated()) {
-        res.render('recipe.ejs');
-    } else {
-        res.redirect('/auth');
-    } 
+        if (!data.meals) {
+            return res.render("recipe.ejs", { recipe: null });
+        }
+
+        res.render("recipe.ejs", { recipe: data.meals[0] });
+    } catch (error) {
+        console.error("Error fetching recipe details:", error);
+        res.render("recipe.ejs", { recipe: null });
+    }
 });
+
 
 app.get("/auth/google", passport.authenticate("google", {
     scope: ["profile", "email"],

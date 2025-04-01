@@ -7,6 +7,7 @@ import env from 'dotenv';
 import passport from 'passport';
 import { Strategy } from 'passport-local';
 import GoogleStrategy from "passport-google-oauth2"
+import fetch from 'node-fetch';
 
 const app = express();
 const port = 3000;
@@ -21,18 +22,14 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    // cookie: {
-    //     maxAge: 1000 * 60 * 60, // 1 hour
-    // }
 }));
-   
 
 app.use(passport.initialize());
 app.use(passport.session());
 
 const db = new pg.Client({
     connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false } // Needed for Render
+    ssl: { rejectUnauthorized: false }
 });
 db.connect();
 
@@ -44,30 +41,18 @@ app.get('/auth', (req, res) => {
     res.render('auth.ejs');
 });
 
-app.get('/home', (req, res) => {
-    if (req.isAuthenticated()) {
-        res.render('home.ejs');
-    }
-    else {
-        res.redirect('/auth');
-    }    
-});
-
 app.get('/about-us', (req, res) => {
     if (req.isAuthenticated()) {
         res.render('about-us.ejs');
-    }
-    else {
+    } else {
         res.redirect('/auth');
     }   
 });
 
-
 app.get('/recipe', (req, res) => {
     if (req.isAuthenticated()) {
         res.render('recipe.ejs');
-    }
-    else {
+    } else {
         res.redirect('/auth');
     } 
 });
@@ -81,6 +66,61 @@ app.get("/auth/google/home", passport.authenticate("google", {
     failureRedirect: "/login",
 }))
 
+app.get("/home", async (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.redirect("/auth");
+    }
+
+    try {
+        const response = await fetch("https://www.themealdb.com/api/json/v1/1/search.php?s=");
+        const data = await response.json();
+
+        res.render("home.ejs", { recipes: data.meals || [] });
+    } catch (error) {
+        console.error("Error fetching recipes:", error);
+        res.render("home.ejs", { recipes: [] });
+    }
+});
+
+app.post('/searchByRecipe', async (req, res) => {
+    const recipeName = req.body.recipe;
+    try {
+        const response = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${recipeName}`);
+        const data = await response.json();
+
+        res.render("home.ejs", { recipes: data.meals || [] });
+    } catch (error) {
+        console.error("Error searching recipe:", error);
+        res.render("home.ejs", { recipes: [] });
+    }
+});
+
+app.post('/searchByIngrediants', async (req, res) => {
+    const ingredients = req.body.ingredients; 
+    const recipesPromises = ingredients.map(ingredient =>
+        fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?i=${ingredient}`)
+            .then(response => response.json())
+            .catch(error => console.error(`Error fetching recipes for ${ingredient}:`, error))
+    );
+
+    try {
+        const responses = await Promise.all(recipesPromises);
+        const recipesData = responses.map(response => response.meals || []);
+        
+        let commonRecipes = recipesData.reduce((acc, curr) => {
+            return acc.filter(recipe => curr.some(r => r.idMeal === recipe.idMeal));
+        });
+
+        if (commonRecipes.length === 0) {
+            commonRecipes = recipesData[0];
+        }
+
+        res.json({ recipes: commonRecipes });
+    } catch (error) {
+        console.error("Error searching by ingredients:", error);
+        res.json({ recipes: [] });
+    }
+});
 
 app.post('/auth', async (req, res, next) => {
     const { action, email, password } = req.body;
@@ -143,18 +183,8 @@ app.post('/auth', async (req, res, next) => {
     }
 });
 
-app.post('/searchByIngrediants', (req, res) => {
-
-});
-
-app.post('/searchByRecipe', (req, res) => {
-
-});
-
-passport.use(new Strategy({ usernameField: 'email', passwordField: 'password' }, async function verify(email, password, cb ) { // customize the field names to match your form
+passport.use(new Strategy({ usernameField: 'email', passwordField: 'password' }, async function verify(email, password, cb ) {
     try {
-        console.log('passport-local strategy triggered');
-        console.log('email:', email);
         const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
         
         if (result.rows.length > 0) {
@@ -175,7 +205,7 @@ passport.use(new Strategy({ usernameField: 'email', passwordField: 'password' },
             });
         }
         else{
-            return cb("User not found");
+            return done(null, false, { message: "Incorrect password" });
         }
     } catch (error) {
         console.log('Error querying database:', error);
@@ -239,8 +269,6 @@ passport.deserializeUser((user, cb) => {
     cb(null, user);
 })
 
-
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
-

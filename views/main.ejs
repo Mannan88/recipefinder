@@ -1,12 +1,17 @@
+<!DOCTYPE html>
+<head>
 <meta charset="UTF-8">
 <meta content="IE=edge" http-equiv="X-UA-Compatible">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>Flavour Finder</title>
+<title>FlavourFinder</title>
 <link href="style.css" rel="stylesheet">
+</head>
 
-
+<body>
 
 <header>
+    
     <!--<ul>
         <li class="active">Home</li>
         <li>Contact</li>
@@ -14,10 +19,16 @@
         <li>Category</li>
     </ul>-->
 </header>
+
 <div class="slider">
+    <form action="/auth" method="get">
+        <button class="authButton" type="submit">Find Recipes!</button>
+    </form>
     <div class="title">
         FlavourFinder
     </div>
+   
+    
     <div class="images">
         <div class="item" style="--i: 1;">
             <img src="/images/1.png">
@@ -38,6 +49,7 @@
             <img src="/images/6.png">
         </div>
     </div>
+   
     <div class="content">
         <div class="item active">
             <h1>PRODUCT NAME 1</h1>
@@ -81,9 +93,11 @@
             </div>
             <button>See more</button>
         </div>
+       
     </div>
     <button id="prev"><</button>
     <button id="next">></button>
 </div>
 
 <script src="app.js"></script>
+</body>

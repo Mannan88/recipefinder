@@ -152,3 +152,28 @@
     #prev:hover{
         opacity: 1
     }
+
+    form {
+        z-index: 999;
+        position: absolute;
+        top: 80%;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+    }
+
+  .authButton{
+    margin-top: 10px;
+    padding: 10px 30px;
+    border-radius: 20px;
+    background-color: #E88735;
+    color: #fff;
+    font-size: 1.5em;
+    border: none;
+  }  
+  .authButton:hover{
+    background: #dc721b;
+    cursor: pointer;
+  }
+
+    

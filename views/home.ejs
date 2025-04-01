@@ -1,61 +1,119 @@
+<!-- <div class="ingredients-section">
+            <form action="/searchByIngrediants" method="POST">
+                <input type="hidden" name="ingredient" value="Eggs">
+                <button type="submit">Eggs</button>
+            </form>
+            
+            <form action="/searchByIngrediants" method="POST">
+                <input type="hidden" name="ingredient" value="Chicken">
+                <button type="submit">Chicken</button>
+            </form>
+            
+            <form action="/searchByIngrediants" method="POST">
+                <input type="hidden" name="ingredient" value="Rice">
+                <button type="submit">Rice</button>
+            </form>
+        </div> -->
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flavour Finder</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+
 <body>
 
     <div class="container">
-     <div class="sideimage">
-        </div> 
-      
+
+        <!-- Ingredients Section -->
         <div class="ingredients-section">
-            <div class="search-baring">
-                <input type="text" placeholder="Search Ingredients">
+            <div class="search-bar">
+                <form id="ingredientSearchForm" action="/searchByIngrediants" method="POST">
+                    <input type="text" name="ingredient" placeholder="Search ingredient">
+                    <button type="submit" class="button">Search</button>
+                </form>
             </div>
-         <div class="ingredients-list">
-            <button class="button">Honey</button>
-                <button class="button">Flour</button>
-                <button class="button">Baking Powder</button>
-                <button class="button">Butter</button>
-                <button class="button">Oil</button>
-                <button class="button">Eggs</button>
-                <button class="button">Salt</button>
-                <button class="button">Rice</button>
-                <button class="button">Onion</button>
-                <button class="button">Coriander</button>
-                <button class="button">Soya Sauce</button>
-                <button class="button">Vinegar</button>
-                <button class="button">Red Chilli Sauce</button>
-            </div>
-            <div class="fun-fact">
-                🍌 Botanically, bananas are berries because they are part of a flowering plant that contains seeds.
-            </div>
-        </div> 
-         
-        <div class="recipes-section">
-            <div class="search-barrec">
-                <input type="text" placeholder="Search Recipes">
-            </div>
-            <div class="recipe-cards">
-                <div class="recipe-card">
-                    <img src="/images/Old Fashioned Pancakes.jpeg">
-                    <p>PANCAKES</p>
-                </div>
-                <div class="recipe-card">
-                    <img src="/images/omelette.jpeg">
-                    <p>OMELETTE</p>
-                </div>
-                <div class="recipe-card">
-                    <img src="/images/Fried Rice.jpeg">
-                    <p>FRIED RICE</p>
-                </div>
+            <div class="ingredients-list">
+                <button class="button" data-ingredient="Honey">Honey</button>
+                <button class="button" data-ingredient="Flour">Flour</button>
+                <button class="button" data-ingredient="Baking Powder">Baking Powder</button>
+                <button class="button" data-ingredient="Butter">Butter</button>
+                <button class="button" data-ingredient="Oil">Oil</button>
+                <button class="button" data-ingredient="Eggs">Eggs</button>
             </div>
         </div>
+
+        <!-- Recipes Section -->
+        <div id="recipes-container" class="recipes-section">
+            <div class="search-barrec">
+                <form action="/searchByRecipe" method="POST">
+                    <input type="text" name="recipe" placeholder="Search by Recipe">
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+
     </div>
 
+    <script>
+        let selectedIngredients = []; // Array to store selected ingredients
+
+        $(document).ready(function () {
+            // Add ingredient to selectedIngredients array on button click
+            $(".button").click(function () {
+                let ingredient = $(this).data("ingredient");
+                if (!selectedIngredients.includes(ingredient)) {
+                    selectedIngredients.push(ingredient);
+                    loadCommonRecipes();
+                }
+            });
+
+            // Search ingredient by text
+            $("#ingredientSearchForm").submit(function (event) {
+                event.preventDefault();
+                let ingredient = $("input[name='ingredient']").val();
+                if (ingredient && !selectedIngredients.includes(ingredient)) {
+                    selectedIngredients.push(ingredient);
+                    loadCommonRecipes();
+                }
+            });
+
+            function loadCommonRecipes() {
+                $.ajax({
+                    url: "/searchByIngrediants",
+                    type: "POST",
+                    data: { ingredients: selectedIngredients },
+                    success: function (data) {
+                        renderRecipes(data.recipes);
+                    }
+                });
+            }
+
+            function renderRecipes(recipes) {
+                let recipesContainer = $("#recipes-container");
+                recipesContainer.empty();
+
+                if (recipes.length > 0) {
+                    recipes.forEach(recipe => {
+                        recipesContainer.append(`
+                            <div class="recipe-card">
+                                <img src="${recipe.strMealThumb}" alt="${recipe.strMeal}">
+                                <p>${recipe.strMeal}</p>
+                            </div>
+                        `);
+                    });
+                } else {
+                    recipesContainer.append("<p>No common recipes found.</p>");
+                }
+            }
+        });
+    </script>
+
 </body>
+
 </html>

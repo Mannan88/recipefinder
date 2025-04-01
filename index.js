@@ -6,6 +6,7 @@ import session from 'express-session';
 import env from 'dotenv';
 import passport from 'passport';
 import { Strategy } from 'passport-local';
+import GoogleStrategy from "passport-google-oauth2"
 
 const app = express();
 const port = 3000;
@@ -69,8 +70,16 @@ app.get('/recipe', (req, res) => {
     else {
         res.redirect('/auth');
     } 
-    
 });
+
+app.get("/auth/google", passport.authenticate("google", {
+    scope: ["profile", "email"],
+}))
+
+app.get("/auth/google/home", passport.authenticate("google", {
+    successRedirect: "/home",
+    failureRedirect: "/login",
+}))
 
 
 app.post('/auth', async (req, res, next) => {
@@ -173,6 +182,53 @@ passport.use(new Strategy({ usernameField: 'email', passwordField: 'password' },
         return cb(error);
     }
 }));
+
+passport.use(
+    "google",
+    new GoogleStrategy(
+      {
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: "http://localhost:3000/auth/google/home",
+        userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
+      },
+      async (accessToken, refreshToken, profile, cb) => {
+        try {
+          console.log("Google profile", profile);
+
+          if (!profile.emails || profile.emails.length === 0) {
+            return cb(new Error("No email found in Google profile"));
+          }
+
+          const result = await db.query("SELECT * FROM users WHERE email = $1", [
+            profile.email,
+          ]);
+          if (result.rows.length === 0) {
+            const newUser = await db.query(
+              "INSERT INTO users (email, password, google_id) VALUES ($1, $2, $3) RETURNING *",
+              [profile.email, "google", profile.id]
+            );
+            console.log("newUser: ", newUser.rows[0]);
+            return cb(null, newUser.rows[0]);
+          } else {
+            const user = result.rows[0];
+            if(user.google_id === null) {
+                const updatedUser = await db.query("UPDATE users SET google_id = $1 WHERE email = $2 RETURNING *", [profile.id, profile.email])
+                console.log("updatedUser: ", updatedUser.rows[0]);
+                return cb(null, updatedUser.rows[0]);
+            }
+            else {
+                console.log("user: ",user);
+                return cb(null, result.rows[0]);
+            }
+            
+          }
+        } catch (err) {
+          return cb(err);
+        }
+      }
+    )
+  );
 
 
 passport.serializeUser((user, cb) => {

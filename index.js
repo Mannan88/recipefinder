@@ -20,9 +20,9 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie: {
-        maxAge: 1000 * 60 * 60, // 1 hour
-    }
+    // cookie: {
+    //     maxAge: 1000 * 60 * 60, // 1 hour
+    // }
 }));
    
 
@@ -44,16 +44,32 @@ app.get('/auth', (req, res) => {
 });
 
 app.get('/home', (req, res) => {
-    res.render('home.ejs');
-        })
+    if (req.isAuthenticated()) {
+        res.render('home.ejs');
+    }
+    else {
+        res.redirect('/auth');
+    }    
+});
 
 app.get('/about-us', (req, res) => {
-    res.render('about.ejs');
+    if (req.isAuthenticated()) {
+        res.render('about-us.ejs');
+    }
+    else {
+        res.redirect('/auth');
+    }   
 });
 
 
 app.get('/recipe', (req, res) => {
-    res.render('recipe.ejs');
+    if (req.isAuthenticated()) {
+        res.render('recipe.ejs');
+    }
+    else {
+        res.redirect('/auth');
+    } 
+    
 });
 
 

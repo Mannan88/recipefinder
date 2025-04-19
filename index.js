@@ -65,6 +65,14 @@ app.get('/recipe/:id', async (req, res) => {
     }
 });
 
+app.get("/logout", (req, res) => {
+    req.logout((err) =>{
+        if(err){
+            console.err("Error in login ", err)
+        }
+        res.redirect("/");
+    })
+})
 
 app.get("/auth/google", passport.authenticate("google", {
     scope: ["profile", "email"],

@@ -65,14 +65,6 @@ app.get('/recipe/:id', async (req, res) => {
     }
 });
 
-app.get("/logout", (req, res) => {
-    req.logout((err) =>{
-        if(err){
-            console.err("Error in login ", err)
-        }
-        res.redirect("/");
-    })
-})
 
 app.get("/auth/google", passport.authenticate("google", {
     scope: ["profile", "email"],
@@ -101,16 +93,26 @@ app.get("/home", async (req, res) => {
 
 app.post('/searchByRecipe', async (req, res) => {
     const recipeName = req.body.recipe;
+
     try {
         const response = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${recipeName}`);
         const data = await response.json();
 
-        res.render("home.ejs", { recipes: data.meals || [] });
+        const recipes = data.meals
+            ? data.meals.map(meal => ({
+                  idMeal: meal.idMeal,
+                  strMeal: meal.strMeal,
+                  strMealThumb: meal.strMealThumb
+              }))
+            : [];
+
+        res.json({ recipes });
     } catch (error) {
         console.error("Error searching recipe:", error);
-        res.render("home.ejs", { recipes: [] });
+        res.json({ recipes: [] });
     }
 });
+
 
 app.post('/searchByIngrediants', async (req, res) => {
     const ingredients = req.body.ingredients; 

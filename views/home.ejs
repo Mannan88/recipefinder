@@ -14,7 +14,6 @@
                 <button type="submit">Rice</button>
             </form>
         </div> -->
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -27,13 +26,11 @@
 </head>
 
 <body>
-
     <div class="container">
-
         <!-- Ingredients Section -->
         <div class="ingredients-section">
             <div class="search-bar">
-                <form id="ingredientSearchForm" action="/searchByIngrediants" method="POST">
+                <form id="ingredientSearchForm" action="/searchByIngredients" method="POST">
                     <input type="text" name="ingredient" placeholder="Search ingredient">
                     <button type="submit" class="button">Search</button>
                 </form>
@@ -48,41 +45,61 @@
             </div>
         </div>
 
-        <!-- Recipes Section -->
         <div id="recipes-container" class="recipes-section">
             <div class="search-barrec">
-                <form action="/searchByRecipe" method="POST">
+                <form id="recipeSearchForm">
                     <input type="text" name="recipe" placeholder="Search by Recipe">
                     <button type="submit">Search</button>
                 </form>
             </div>
         </div>
-
     </div>
 
     <script>
-        let selectedIngredients = []; // Array to store selected ingredients
+        let selectedIngredients = [];
 
         $(document).ready(function () {
-            // Add ingredient to selectedIngredients array on button click
             $(".button").click(function () {
-                let ingredient = $(this).data("ingredient");
-                if (!selectedIngredients.includes(ingredient)) {
+                const ingredient = $(this).data("ingredient");
+                const index = selectedIngredients.indexOf(ingredient);
+                if (index === -1) {
                     selectedIngredients.push(ingredient);
-                    loadCommonRecipes();
+                } else {
+                    selectedIngredients.splice(index, 1);
                 }
+                loadCommonRecipes();
             });
 
-            // Search ingredient by text
-            $("#ingredientSearchForm").submit(function (event) {
-                event.preventDefault();
-                let ingredient = $("input[name='ingredient']").val();
+            $("#ingredientSearchForm").submit(function (e) {
+                e.preventDefault();
+                const ingredient = $("input[name='ingredient']").val().trim();
                 if (ingredient && !selectedIngredients.includes(ingredient)) {
                     selectedIngredients.push(ingredient);
+                    $("input[name='ingredient']").val("");
                     loadCommonRecipes();
                 }
             });
 
+            $("#recipeSearchForm").submit(function (e) {
+                e.preventDefault(); // Stop form submission
+                const recipeName = $("input[name='recipe']").val().trim();
+                if (recipeName) {
+                    $.ajax({
+                        url: "/searchByRecipe",
+                        type: "POST",
+                        data: { recipe: recipeName },
+                        traditional: true,
+                        success: function (data) {
+                            console.log("Data received from server:", data); // Inspect the structure
+                            renderRecipes(data.recipes || []);
+                        },
+                        error: function () {
+                            console.error("Error loading recipes by name.");
+                            renderRecipes([]);
+                        }
+                    });
+                }
+            });
             function loadCommonRecipes() {
                 $.ajax({
                     url: "/searchByIngrediants",
@@ -94,27 +111,50 @@
                 });
             }
 
-            function renderRecipes(recipes) {
-                let recipesContainer = $("#recipes-container");
-                recipesContainer.empty();
 
-                if (recipes.length > 0) {
-                    recipes.forEach(recipe => {
-                        recipesContainer.append(`
-                            <div class="recipe-card">
-                              <a href="/recipe/${recipe.idMeal}">
-                                <img src="${recipe.strMealThumb}" alt="${recipe.strMeal}">
-                                <p>${recipe.strMeal}</p></a>
-                            </div>
-                        `);
-                    });
-                } else {
-                    recipesContainer.append("<p>No common recipes found.</p>");
+            function loadSearchedRecipes(recipeName) {
+                $.ajax({
+                    url: "/searchByRecipe",
+                    type: "POST",
+                    data: { recipe: recipeName },
+                    traditional: true,
+                    success: function (data) {
+                        if (!data || !data.recipes) {
+                            console.error("Invalid response format:", data);
+                            renderRecipes([]);
+                            return;
+                        }
+                        console.log("Data received from server:", data.recipes);
+                        renderRecipes(data.recipes);
+                    },
+                    error: function () {
+                        console.error("Error loading recipes by name.");
+                        renderRecipes([]);
+                    }
+                });
+            }
+            function renderRecipes(recipes) {
+                const container = $("#recipes-container");
+                container.empty();
+
+                if (!recipes || recipes.length === 0) {
+                    container.append("<p>No recipes found.</p>");
+                    return;
                 }
+
+                recipes.forEach(recipe => {
+                    container.append(`
+            <div class="recipe-card">
+                <a href="/recipe/${recipe.idMeal}">
+                    <img src="${recipe.strMealThumb}" alt="${recipe.strMeal}">
+                    <p>${recipe.strMeal}</p>
+                </a>
+            </div>
+        `);
+                });
             }
         });
     </script>
-
 </body>
 
 </html>

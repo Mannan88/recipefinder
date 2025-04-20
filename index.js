@@ -108,8 +108,22 @@ app.post('/favourite', async (req, res) => {
     if (!req.isAuthenticated()) {
         return res.redirect("/auth");
     }
-    const mealId = req.body.mealId;
-    console.log(req.user.id);
+    try {
+        const result = await db.query("SELECT * FROM favourite WHERE user_id = $1 AND recipe_id = $2", [req.user.id, req.body.mealId]);
+        if(result.rows.length === 0){
+            await db.query("INSERT INTO favourite (user_id, recipe_id) VALUES ($1, $2)",[req.user.id, req.body.mealId]);
+            console.log("Recipe meal added to your favourite list " + req.body.mealId);
+            res.redirect("/home");
+        }
+        else{
+            console.log(`Recipe ${req.body.mealId} is already in favorites for user ${req.user.id}`);
+            res.status(200).send("Recipe is already in your favorites.");
+        }
+        
+    } catch (error) {
+        console.error("Error adding recipe to favorites:", error);
+        res.status(500).send("An error occurred while adding the recipe to favorites.");
+    }
     
 })
 

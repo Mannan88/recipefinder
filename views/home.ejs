@@ -23,25 +23,10 @@
     <link rel="stylesheet" href="styles.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
-  <!-- Navbar -->
-<nav class="navbar">
-        <div class="navbar-logo">
-            <img src="/images/FLAVOUR__1.png" alt="Flavour Finder Logo" class="navbar-logo-img" />
-        </div>
-    <div class="navbar-links">
-        <a href="/">Home</a>
-        <a href="/favourites">Favourites</a>
-        <a href="/about">About</a>
-        <a href="/about">Contact</a>
-      <div class="profile-dropdown">
-            <img src="/images/acc_img_.png" alt="Profile" class="profile-icon" />
-         <div class="dropdown-menu">
-              <a href="/signout">Sign Out</a>
-      </div>
-     </div>
- </nav>
   
   <body>
+<%- include('partials/navbar.ejs') %>
+
     <div class="container">
       <!-- Ingredients Section -->
       <div class="ingredients-section">

@@ -52,16 +52,57 @@ app.get('/about-us', (req, res) => {
     }   
 });
 
+
 app.get('/profile', async (req, res) => {
-    if (req.isAuthenticated()) {
-        const result = await db.query("SELECT * FROM favourite WHERE user_id = $1", [req.user.id]); 
-        res.render('profile.ejs', { user: req.user,
-            recipes: result.rows
-         });
-    } else {
-        res.redirect('/auth');
+    if (!req.isAuthenticated()) {
+        return res.redirect('/auth');
     }
-})
+
+    try {
+        const favoritesResult = await db.query(
+            "SELECT recipe_id FROM favourite WHERE user_id = $1", 
+            [req.user.id]
+        );
+       
+        const recipeIds = favoritesResult.rows.map(item => item.recipe_id);
+        
+        const recipePromises = recipeIds.map(async id => {
+            try {
+                const response = await fetch(
+                    `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
+                );
+                const data = await response.json();
+                return data.meals ? data.meals[0] : null;
+            } catch (error) {
+                console.error(`Error fetching recipe ${id}:`, error);
+                return null;
+            }
+        });
+
+        const recipeResults = await Promise.all(recipePromises);
+        
+        const recipeDetails = recipeResults
+            .filter(meal => meal !== null)
+            .map(meal => ({
+                id: meal.idMeal,
+                name: meal.strMeal,
+                image: meal.strMealThumb,
+            }));
+
+        res.render('profile.ejs', {
+            user: req.user,
+            recipeDetails: recipeDetails,
+            favoritesCount: recipeIds.length
+        });
+
+    } catch (error) {
+        console.error('Profile load error:', error);
+        res.render('profile.ejs', {
+            user: req.user,
+            error: 'Could not load recipe details'
+        });
+    }
+});
 
 app.get('/recipe/:id', async (req, res) => {
     const mealId = req.params.id;

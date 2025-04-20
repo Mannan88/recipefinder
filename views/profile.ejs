@@ -8,7 +8,8 @@
 <body>
     <div class="profile">
         <div class="profile_photo">
-            <img src="<%= user.img  %>" alt="profile photo">
+            <% if(locals.user.imag !== null) %>
+            <img src="<%= user.img %>" alt="profile photo">
         </div>
         <form action="/logout" method="post">
             <button type="submit">Log Out</button>

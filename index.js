@@ -52,9 +52,12 @@ app.get('/about-us', (req, res) => {
     }   
 });
 
-app.get('/profile', (req, res) => {
+app.get('/profile', async (req, res) => {
     if (req.isAuthenticated()) {
-        res.render('profile.ejs', { user: req.user });
+        const result = await db.query("SELECT * FROM favourite WHERE user_id = $1", [req.user.id]); 
+        res.render('profile.ejs', { user: req.user,
+            recipes: result.rows
+         });
     } else {
         res.redirect('/auth');
     }
@@ -144,7 +147,7 @@ app.post('/favourite', async (req, res) => {
         res.status(500).send("An error occurred while adding the recipe to favorites.");
     }
     
-})
+});
 
 
 app.post('/searchByRecipe', async (req, res) => {

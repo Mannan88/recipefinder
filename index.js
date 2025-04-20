@@ -161,9 +161,10 @@ app.post('/favourite-delete', async (req, res) => {
     try {
         await db.query("DELETE FROM favourite WHERE user_id = $1 AND recipe_id = $2", [req.user.id, req.body.mealId]);
         console.log("Recipe meal removed from your favourite list " + req.body.mealId);
+        return res.status(200).json({ success: true, message: "Recipe removed from favourites." });
     } catch (error) {
         console.error("Error removing recipe from favourites:", error);
-        res.status(500).send("An error occurred while removing the recipe from favourites.");
+        return res.status(500).json({ success: false, message: "An error occurred while removing the recipe from favourites." });
     }
 })
 
@@ -176,16 +177,16 @@ app.post('/favourite', async (req, res) => {
         if(result.rows.length === 0){
             await db.query("INSERT INTO favourite (user_id, recipe_id) VALUES ($1, $2)",[req.user.id, req.body.mealId]);
             console.log("Recipe meal added to your favourite list " + req.body.mealId);
-            res.redirect("/home");
+            return res.status(200).json({ success: true, message: "Recipe added to favorites." });
         }
         else{
             console.log(`Recipe ${req.body.mealId} is already in favorites for user ${req.user.id}`);
-            res.status(200).send("Recipe is already in your favorites.");
+            return res.status(200).json({ success: false, message: "Recipe is already in your favorites." });
         }
         
     } catch (error) {
         console.error("Error adding recipe to favorites:", error);
-        res.status(500).send("An error occurred while adding the recipe to favorites.");
+        return res.status(500).json({ success: false, message: "An error occurred while adding the recipe to favorites." });
     }
     
 });

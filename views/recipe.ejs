@@ -59,8 +59,14 @@
     
         <div class="instructions">
             <h3>Instructions</h3>
-            <p><%= recipe.strInstructions %></p>
-        </div>
+            <ol>
+              <% recipe.strInstructions.split('.').forEach((step) => { 
+                if (step.trim()) { %>
+                  <li><%= step.trim() %>.</li>
+              <% } }); %>
+            </ol>
+          </div>
+          
     
         <div class="yt">
             <a href="<%= recipe.strYoutube %>" class="video-link" target="_blank">Watch on YouTube</a>

@@ -22,6 +22,9 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
+    cookie : {
+        maxAge : 1000 * 60 * 60 * 24 // 24 hour
+    }
 }));
 
 app.use(passport.initialize());
@@ -90,6 +93,25 @@ app.get("/home", async (req, res) => {
         res.render("home.ejs", { recipes: [] });
     }
 });
+
+app.get('/logut', (req, res) => {
+    req.logout((err) => {
+        if(err) {
+            console.error("Error logging out:", err);
+            return res.status(500).send("Server error");
+        }
+        res.redirect('/');
+    })
+})
+
+app.post('/favourite', async (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.redirect("/auth");
+    }
+    const mealId = req.body.mealId;
+    console.log(req.user.id);
+    
+})
 
 app.post('/searchByRecipe', async (req, res) => {
     const recipeName = req.body.recipe;
@@ -281,11 +303,21 @@ passport.use(
 
 
 passport.serializeUser((user, cb) => {
-    cb(null, user);
+    cb(null, user.id);
 })
 
-passport.deserializeUser((user, cb) => {
-    cb(null, user);
+passport.deserializeUser(async (id, cb) => {
+    try {
+        const result = await db.query("SELECT * FROM users WHERE id = $1", [id])
+        if(result.rows.length > 0){
+            cb(null, result.rows[0]);
+        }
+        else{
+            cb("User not found");
+        }
+    } catch (error) {
+        cb(error);
+    }
 })
 
 app.listen(port, () => {

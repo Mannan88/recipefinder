@@ -16,145 +16,162 @@
         </div> -->
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Flavour Finder</title>
-    <link rel="stylesheet" href="styles.css">
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=favorite"
+    />
+    <link rel="stylesheet" href="styles.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="container">
-        <!-- Ingredients Section -->
-        <div class="ingredients-section">
-            <div class="search-bar">
-                <form id="ingredientSearchForm" action="/searchByIngredients" method="POST">
-                    <input type="text" name="ingredient" placeholder="Search ingredient">
-                    <button type="submit" class="button">Search</button>
-                </form>
-            </div>
-            <div class="ingredients-list">
-                <button class="button" data-ingredient="Honey">Honey</button>
-                <button class="button" data-ingredient="Flour">Flour</button>
-                <button class="button" data-ingredient="Baking Powder">Baking Powder</button>
-                <button class="button" data-ingredient="Butter">Butter</button>
-                <button class="button" data-ingredient="Oil">Oil</button>
-                <button class="button" data-ingredient="Eggs">Eggs</button>
-            </div>
+      <!-- Ingredients Section -->
+      <div class="ingredients-section">
+        <div class="search-bar">
+          <form
+            id="ingredientSearchForm"
+            action="/searchByIngrediants"
+            method="POST"
+          >
+            <input
+              type="text"
+              name="ingredient"
+              placeholder="Search ingredient"
+            />
+            <button type="submit" class="button">Search</button>
+          </form>
         </div>
+        <div class="ingredients-list">
+          <button class="button" data-ingredient="Honey">Honey</button>
+          <button class="button" data-ingredient="Flour">Flour</button>
+          <button class="button" data-ingredient="Baking Powder">
+            Baking Powder
+          </button>
+          <button class="button" data-ingredient="Butter">Butter</button>
+          <button class="button" data-ingredient="Oil">Oil</button>
+          <button class="button" data-ingredient="Eggs">Eggs</button>
+        </div>
+      </div>
 
-        <div id="recipes-container" class="recipes-section">
-            <div class="search-barrec">
-                <form id="recipeSearchForm">
-                    <input type="text" name="recipe" placeholder="Search by Recipe">
-                    <button type="submit">Search</button>
-                </form>
-            </div>
+      <div id="recipes-container" class="recipes-section">
+        <div class="search-barrec">
+          <form id="recipeSearchForm">
+            <input type="text" name="recipe" placeholder="Search by Recipe" />
+            <button type="submit">Search</button>
+          </form>
         </div>
+      </div>
     </div>
 
     <script>
-        let selectedIngredients = [];
+      let selectedIngredients = [];
 
-        $(document).ready(function () {
-            $(".button").click(function () {
-                const ingredient = $(this).data("ingredient");
-                const index = selectedIngredients.indexOf(ingredient);
-                if (index === -1) {
-                    selectedIngredients.push(ingredient);
-                } else {
-                    selectedIngredients.splice(index, 1);
-                }
-                loadCommonRecipes();
+      $(document).ready(function () {
+        $(".button").click(function () {
+          const ingredient = $(this).data("ingredient");
+          const index = selectedIngredients.indexOf(ingredient);
+          if (index === -1) {
+            selectedIngredients.push(ingredient);
+          } else {
+            selectedIngredients.splice(index, 1);
+          }
+          loadCommonRecipes();
+        });
+
+        $("#ingredientSearchForm").submit(function (e) {
+          e.preventDefault();
+          const ingredient = $("input[name='ingredient']").val().trim();
+          if (ingredient && !selectedIngredients.includes(ingredient)) {
+            selectedIngredients.push(ingredient);
+            $("input[name='ingredient']").val("");
+            loadCommonRecipes();
+          }
+        });
+
+        $("#recipeSearchForm").submit(function (e) {
+          e.preventDefault(); // Stop form submission
+          const recipeName = $("input[name='recipe']").val().trim();
+          if (recipeName) {
+            $.ajax({
+              url: "/searchByRecipe",
+              type: "POST",
+              data: { recipe: recipeName },
+              traditional: true,
+              success: function (data) {
+                console.log("Data received from server:", data); // Inspect the structure
+                renderRecipes(data.recipes || []);
+              },
+              error: function () {
+                console.error("Error loading recipes by name.");
+                renderRecipes([]);
+              },
             });
+          }
+        });
+        function loadCommonRecipes() {
+          $.ajax({
+            url: "/searchByIngrediants",
+            type: "POST",
+            data: { ingredients: selectedIngredients },
+            success: function (data) {
+              renderRecipes(data.recipes);
+            },
+          });
+        }
 
-            $("#ingredientSearchForm").submit(function (e) {
-                e.preventDefault();
-                const ingredient = $("input[name='ingredient']").val().trim();
-                if (ingredient && !selectedIngredients.includes(ingredient)) {
-                    selectedIngredients.push(ingredient);
-                    $("input[name='ingredient']").val("");
-                    loadCommonRecipes();
-                }
-            });
+        function loadSearchedRecipes(recipeName) {
+          $.ajax({
+            url: "/searchByRecipe",
+            type: "POST",
+            data: { recipe: recipeName },
+            traditional: true,
+            success: function (data) {
+              if (!data || !data.recipes) {
+                console.error("Invalid response format:", data);
+                renderRecipes([]);
+                return;
+              }
+              console.log("Data received from server:", data.recipes);
+              renderRecipes(data.recipes);
+            },
+            error: function () {
+              console.error("Error loading recipes by name.");
+              renderRecipes([]);
+            },
+          });
+        }
+        function renderRecipes(recipes) {
+          const container = $("#recipes-container");
+          container.empty();
 
-            $("#recipeSearchForm").submit(function (e) {
-                e.preventDefault(); // Stop form submission
-                const recipeName = $("input[name='recipe']").val().trim();
-                if (recipeName) {
-                    $.ajax({
-                        url: "/searchByRecipe",
-                        type: "POST",
-                        data: { recipe: recipeName },
-                        traditional: true,
-                        success: function (data) {
-                            console.log("Data received from server:", data); // Inspect the structure
-                            renderRecipes(data.recipes || []);
-                        },
-                        error: function () {
-                            console.error("Error loading recipes by name.");
-                            renderRecipes([]);
-                        }
-                    });
-                }
-            });
-            function loadCommonRecipes() {
-                $.ajax({
-                    url: "/searchByIngrediants",
-                    type: "POST",
-                    data: { ingredients: selectedIngredients },
-                    success: function (data) {
-                        renderRecipes(data.recipes);
-                    }
-                });
-            }
+          if (!recipes || recipes.length === 0) {
+            container.append("<p>No recipes found.</p>");
+            return;
+          }
 
-
-            function loadSearchedRecipes(recipeName) {
-                $.ajax({
-                    url: "/searchByRecipe",
-                    type: "POST",
-                    data: { recipe: recipeName },
-                    traditional: true,
-                    success: function (data) {
-                        if (!data || !data.recipes) {
-                            console.error("Invalid response format:", data);
-                            renderRecipes([]);
-                            return;
-                        }
-                        console.log("Data received from server:", data.recipes);
-                        renderRecipes(data.recipes);
-                    },
-                    error: function () {
-                        console.error("Error loading recipes by name.");
-                        renderRecipes([]);
-                    }
-                });
-            }
-            function renderRecipes(recipes) {
-                const container = $("#recipes-container");
-                container.empty();
-
-                if (!recipes || recipes.length === 0) {
-                    container.append("<p>No recipes found.</p>");
-                    return;
-                }
-
-                recipes.forEach(recipe => {
-                    container.append(`
+          recipes.forEach((recipe) => {
+            container.append(`
             <div class="recipe-card">
-                <a href="/recipe/${recipe.idMeal}">
+                <form action="/favourite" method="POST">
+                  <input type="hidden" name="mealId" value="${recipe.idMeal}">
+                  <button type="submit" class="favorite-button">
+                    <span class="material-symbols-outlined">favorite</span>
+                  </button>
+               </form>
+               <a href="/recipe/${recipe.idMeal}">
                     <img src="${recipe.strMealThumb}" alt="${recipe.strMeal}">
                     <p>${recipe.strMeal}</p>
-                </a>
+               </a>
             </div>
         `);
-                });
-            }
-        });
+          });
+        }
+      });
     </script>
-</body>
-
+  </body>
 </html>

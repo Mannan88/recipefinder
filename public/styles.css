@@ -39,7 +39,7 @@ body {
   }
   
   .navbar-logo-img {
-    height: 150px; /* Keep your size */
+    height: 120px; 
     object-fit: contain;
   }
   

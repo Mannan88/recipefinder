@@ -94,7 +94,7 @@ app.get("/home", async (req, res) => {
     }
 });
 
-app.get('/logut', (req, res) => {
+app.get('/logout', (req, res) => {
     req.logout((err) => {
         if(err) {
             console.error("Error logging out:", err);

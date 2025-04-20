@@ -10,59 +10,61 @@
 
 <body>
     <header>
+        <div class="nav-logo">
+            <a href="/home" class="logo-button">
+                <img src="/images/FLAVOUR__1.png" alt="Home" />
+              </a>
+            </div>      
     <div class="nav">
-            <a class="nav-button" href="/home">Home</a>
-            <a class="nav-button" href="#">About Us</a>
-            <a class="nav-button" href="#">Services</a>
-            <a class="nav-button" href="#">Portfolio</a>
-            <a class="nav-button" href="#">Contact</a>
-            <a class="nav-button" href="#">Blog</a>
+        <div class="navbutt">
+                <a class="nav-button" href="/home">Home</a>
+                <a class="nav-button" href="#">About Us</a>
+                <a class="nav-button" href="#">Portfolio</a>
+                <a class="nav-button" href="#">Contact</a>
+            <div class="profile-dropdown">
+                    <img src="/images/acc_img_.png" alt="Profile" class="profile-icon" />
+                <div class="dropdown-menu">
+                      <a href="/signout">Sign Out</a>
+                </div>
+            </div>
         </div>
+    </div>
         
     </header>
-    <div class="container">
-        <div class="foodDetails"> <div class="foodinfo">
-                <h2>
-                    <%= recipe.strMeal %>
-                </h2>
-                <p><strong>Category:</strong>
-                    <%= recipe.strCategory %>
-                </p>
-                <p><strong>Origin:</strong>
-                    <%= recipe.strArea %>
-                </p>
-            </div>
+    <div class="container"> 
+        <div class="foodDetails">
+            <h2><%= recipe.strMeal %></h2>
+            <p><strong>Category:</strong> <%= recipe.strCategory %></p>
+            <p><strong>Origin:</strong> <%= recipe.strArea %></p>
+        </div>
+        
+        <div class="foodimg">
             <img src="<%= recipe.strMealThumb %>">
-            </div>
-            <div class="ingredients">
-                <h3>Ingredients:</h3>
-                <ul>
-                    <% for(let i=1; i <=20; i++) { let ingredient=recipe['strIngredient' + i]; let
-                        measure=recipe['strMeasure' + i]; if (ingredient && ingredient.trim() !=='' ) { %>
-                        <li>
-                            <%= measure %>
-                                <%= ingredient %>
-                        </li>
-                        <% } } %>
-                </ul>
-
-            </div>
-            <div class="instructions">
-                <h3>Instructions</h3>
-                <p>
-                    <%= recipe.strInstructions %>
-                </p>
-            </div>
-
-            <div class="yt">
-                <a href="<%= recipe.strYoutube %>" class="video-link" target="_blank">Watch on YouTube</a>
-            </div>
-
-            <div class="full-recipe">
-                <a href="<%= recipe.strSource %>" class="source-link" target="_blank">View Full Recipe</a>
-
-            </div>
-
+        </div>
+        
+        <div class="ingredients">
+            <h3>Ingredients:</h3>
+            <ul>
+                <% for(let i=1; i <=20; i++) { 
+                    let ingredient=recipe['strIngredient' + i]; 
+                    let measure=recipe['strMeasure' + i]; 
+                    if (ingredient && ingredient.trim() !=='' ) { %>
+                    <li><%= measure %> <%= ingredient %></li>
+                <% } } %>
+            </ul>
+        </div>
+    
+        <div class="instructions">
+            <h3>Instructions</h3>
+            <p><%= recipe.strInstructions %></p>
+        </div>
+    
+        <div class="yt">
+            <a href="<%= recipe.strYoutube %>" class="video-link" target="_blank">Watch on YouTube</a>
+        </div>
+    
+        <div class="full-recipe">
+            <a href="<%= recipe.strSource %>" class="source-link" target="_blank">View Full Recipe</a>
         </div>
     </div>    
 </body>

@@ -1,4 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
     body{
         margin: 0; 
         font-family: monospace;
@@ -41,19 +47,27 @@
         left: 0;
         background-color: #d6e835;
     }
-    .title{
-        position: absolute;
-        top: 10%;
-        right: 57%;
-        text-align: right;
-        color: #fff;
-        font-size: 100px;
-        width: 40%;
-        font-family: 'Pacifico', cursive;
-        text-shadow: 3px 5px 0px #478860;
-        line-height: .9em;
-        transform: rotate(-9deg);
-    }
+    .title {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 9999;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        align-items: start;
+        justify-content: start;
+      }
+      
+      .title .logo {
+        height: 300px;
+        width: 300px;
+        object-fit: contain; 
+        margin: 0;
+        padding: 0;
+      }
+      
+      
     .images{
         position: absolute;
         bottom: 0%;
@@ -87,9 +101,12 @@
         width: 350px;
     }
     .content h1{
-        color: #E88735;
-        font-size: 32px;
+        font-family: 'Pacifico', cursive;
+        color: #d6e835;
+        font-size: 50px;
         padding: 0%;
+        text-shadow:2px 1.5px 0px #fff;
+        
     }
     
     .des{
@@ -101,7 +118,7 @@
         margin-top: 10px;
         padding: 10px 30px;
         border-radius: 20px;
-        background-color: #E88735;
+        background-color: #d6e835;
         color: #fff;
         border: none;
         float: right;
@@ -169,13 +186,14 @@
     margin-top: 10px;
     padding: 10px 30px;
     border-radius: 20px;
-    background-color: #E88735;
+    background-color: #dc721b;
     color: #fff;
     font-size: 1.5em;
     border: none;
   }  
   .authButton:hover{
-    background: #dc721b;
+    background: #fff;
+    color: #dc721b;
     cursor: pointer;
   }
 

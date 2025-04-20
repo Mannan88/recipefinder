@@ -81,19 +81,22 @@
     .content{
         color: #fff;
         position: absolute;
-        top: 7%;
-        left: 64%;
+        top: 5%;
+        left: 65%;
         text-align: justify;
         width: 350px;
     }
     .content h1{
         color: #E88735;
-        font-size: xxx-large;
+        font-size: 32px;
+        padding: 0%;
     }
     
-    /*.des{
-        margin-left:50px;
-    }*/
+    .des{
+        padding: 0%;
+        margin-left:10px;
+        font-size: 15px;
+    }
     .content button{
         margin-top: 10px;
         padding: 10px 30px;

@@ -10,7 +10,50 @@ html, body {
   width:70%;
 }
 
-.nav{
+.nav {
+    display: flex;
+    justify-content: center;
+    background-color: #f0f6ff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    padding: 0.5em;
+    margin: 1em auto;
+    max-width: fit-content;
+  }
+  
+  .nav a {
+    padding: 1em;
+    text-decoration: none;
+    color: #000;
+    font-weight: bold;
+    position: relative;
+    transition: color 0.3s;
+  }
+  
+  .nav a::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #000;
+    transform-origin: bottom right;
+    transition: transform 0.25s ease-out;
+  }
+  
+  .nav a:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+  }
+  
+  .nav a:hover {
+    color: #3f51b5;
+  }
+  
+  
+/*.nav{
     color: #32333c;
     font-size: 25px ;
     display: flex;
@@ -20,6 +63,35 @@ html, body {
    margin: 0;
    padding: 0;
   }
+  .nav-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.nav-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: 5px;
+    z-index: -1;
+}
+
+.nav-button:hover::after,
+.nav-button:focus::after {
+    opacity: 1;
+}*/
+
 
 .foodDetails{
     display: flex;

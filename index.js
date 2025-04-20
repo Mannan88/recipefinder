@@ -51,6 +51,15 @@ app.get('/about-us', (req, res) => {
         res.redirect('/auth');
     }   
 });
+
+app.get('/profile', (req, res) => {
+    if (req.isAuthenticated()) {
+        res.render('profile.ejs', { user: req.user });
+    } else {
+        res.redirect('/auth');
+    }
+})
+
 app.get('/recipe/:id', async (req, res) => {
     const mealId = req.params.id;
     try {
@@ -94,7 +103,7 @@ app.get("/home", async (req, res) => {
     }
 });
 
-app.get('/logout', (req, res) => {
+app.post('/logout', (req, res) => {
     req.logout((err) => {
         if(err) {
             console.error("Error logging out:", err);
@@ -102,6 +111,16 @@ app.get('/logout', (req, res) => {
         }
         res.redirect('/');
     })
+})
+
+app.post('/favourite-delete', async (req, res) => {
+    try {
+        await db.query("DELETE FROM favourite WHERE user_id = $1 AND recipe_id = $2", [req.user.id, req.body.mealId]);
+        console.log("Recipe meal removed from your favourite list " + req.body.mealId);
+    } catch (error) {
+        console.error("Error removing recipe from favourites:", error);
+        res.status(500).send("An error occurred while removing the recipe from favourites.");
+    }
 })
 
 app.post('/favourite', async (req, res) => {
@@ -126,6 +145,7 @@ app.post('/favourite', async (req, res) => {
     }
     
 })
+
 
 app.post('/searchByRecipe', async (req, res) => {
     const recipeName = req.body.recipe;
@@ -280,6 +300,7 @@ passport.use(
       async (accessToken, refreshToken, profile, cb) => {
         try {
           console.log("Google profile", profile);
+          console.log("img", profile.picture);
 
           if (!profile.emails || profile.emails.length === 0) {
             return cb(new Error("No email found in Google profile"));
@@ -290,15 +311,15 @@ passport.use(
           ]);
           if (result.rows.length === 0) {
             const newUser = await db.query(
-              "INSERT INTO users (email, password, google_id) VALUES ($1, $2, $3) RETURNING *",
-              [profile.email, "google", profile.id]
+              "INSERT INTO users (email, password, google_id, img) VALUES ($1, $2, $3, $4) RETURNING *",
+              [profile.email, "google", profile.id, profile.picture]
             );
             console.log("newUser: ", newUser.rows[0]);
             return cb(null, newUser.rows[0]);
           } else {
             const user = result.rows[0];
             if(user.google_id === null) {
-                const updatedUser = await db.query("UPDATE users SET google_id = $1 WHERE email = $2 RETURNING *", [profile.id, profile.email])
+                const updatedUser = await db.query("UPDATE users SET google_id = $1, img = $2 WHERE email = $3 RETURNING *", [profile.id,profile.picture, profile.email])
                 console.log("updatedUser: ", updatedUser.rows[0]);
                 return cb(null, updatedUser.rows[0]);
             }

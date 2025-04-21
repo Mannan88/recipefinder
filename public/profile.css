@@ -91,17 +91,20 @@ form[action="/logout"] button:hover {
 
 .recipe-card img {
     width: 100%;
-    height: 150px;
+    height: auto;
     object-fit: cover;
+    max-height: 250px;
 }
 
 .recipe-card-details {
+    display: flex;
+    justify-content: space-around;
     padding: 15px;
 }
 
 .recipe-card-details a {
     text-decoration: none;
-    color: #007bff;
+    color: #9a6f03;
     font-size: 18px;
     font-weight: bold;
     display: block;
@@ -110,7 +113,7 @@ form[action="/logout"] button:hover {
 }
 
 .recipe-card-details a:hover {
-    color: #0056b3;
+    color: #e2ab05;
 }
 
 /* Favorite Button */

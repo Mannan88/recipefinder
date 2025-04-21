@@ -46,18 +46,20 @@ body {
   .navbar-links {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 30px;
   }
   
   .navbar-links a {
     text-decoration: none;
     color: #2b2b2b;
+    font-size: 18px;
     font-weight: 500;
     transition: color 0.2s;
   }
   
   .navbar-links a:hover {
-    color: #f9d007;
+    border-bottom: solid 2px #f9bc07;
+    color: #f9bc07;
   }
   
   .profile-dropdown {

@@ -15,7 +15,7 @@
     <div class="profile">
         <div class="profile_photo">
             <% if(user.img) { %>
-                <img src="<%= user.img %>" alt="profile photo">
+                <img src= "<%= user.img %>" alt="profile photo">
             <% } else { %>
                 <span class="material-symbols-outlined">
                     person
@@ -40,7 +40,7 @@
                         
                         <p><%= recipe.name %></p>
                     </a>
-                    <form action="/favourite" method="POST" style="display:flex; align-items:center">
+                    <form action="/favourite-delete" method="POST" style="display:flex; align-items:center">
                         <input type="hidden" name="mealId" value="<%= recipe.id %>">
                         <button type="submit" class="favorite-button">
                             <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 471.701 471.701" xml:space="preserve">

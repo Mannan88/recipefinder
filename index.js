@@ -88,7 +88,6 @@ app.get('/profile', async (req, res) => {
                 name: meal.strMeal,
                 image: meal.strMealThumb,
             }));
-
         res.render('profile.ejs', {
             user: req.user,
             recipeDetails: recipeDetails,

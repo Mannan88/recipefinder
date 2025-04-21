@@ -161,15 +161,6 @@ body {
     font-size: 14px;
 }
 
-.fun-fact {
-    background: #ff7043;
-    color: white;
-    padding: 12px;
-    border-radius: 5px;
-    margin-top: 20px;
-    font-size: 14px;
-}
-
 .recipes-section {
     flex-grow: 1;
     display: grid;

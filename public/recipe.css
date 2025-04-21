@@ -4,128 +4,115 @@ html, body {
     height: 100%; /* Ensure full height of the viewport */
     width: 100%;
     overflow-x: hidden;
+    font-family: 'Helvetica Neue', sans-serif;
+  color: #333;
+  background: #fff;
+  }
+  h2, h3 {
+    font-family: 'Georgia', serif;
+    color: #793f1a;
   }
 
-
-.nav-logo{
-    top: -10px;
-    left: -10px;
-    height:90px;
-    width: 100px;
-    position: absolute;
-    z-index: 999;
-    justify-content: start;
-    align-items: start;
-    margin: 0%;
-    padding: 0%;
-}
-
-.nav-logo img{
-    height:100%;
-    width: 100%;
-   
-}
-
- 
-
-.nav {
-    width: 100vw;   
-    height: 60px;
-    display: flex;
-    justify-content:center;
-    align-items: start;
-    gap: 100px;
-  
-    background-color: #edece9;
-}
-.navbutt{
-    margin-left: 1050px;
-}
-.profile-dropdown {
-    position: relative;
-    display: inline-block;
-    margin-left: 1em;
-  }
-  
-  .profile-icon {
-    height: 40px;
-    width: 40px;
-    cursor: pointer;
-    
-  }
-  
-  .dropdown-menu {
-    display: none;
-    position: absolute;
-    right: 0;
-    background-color: #fff;
-    min-width: 120px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    z-index: 1000;
-    border-radius: 5px;
-    overflow: hidden;
-  }
-  
-  .dropdown-menu a {
-    color: #000;
-    padding: 10px;
-    text-decoration: none;
-    display: block;
-    font-weight: normal;
-  }
-  
-  .dropdown-menu a:hover {
-    background-color: #f0f0f0;
-  }
-  
-  /* Show menu on hover */
-  .profile-dropdown:hover .dropdown-menu {
-    display: block;
-  }
-  
-.nav a {
-    padding: 1em;
-    text-decoration: none;
-    color: #000;
-    font-weight: bold;
-    position: relative;
-    transition: color 0.3s;
-}
-  
-.nav a::after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    transform: scaleX(0);
-    height: 2px;
-    bottom: 0;
-    left: 0;
-    background-color: #000;
-    transform-origin: bottom right;
-    transition: transform 0.25s ease-out;
-  }
-  
-  .nav a:hover::after {
-    transform: scaleX(1);
-    transform-origin: bottom left;
-  }
-  
-  .nav a:hover {
-    color: #f9d007;
-  }
-  
-  
   .container {
     display: grid;
     grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
     grid-template-rows: repeat(3, 1fr);  /* 3 rows based on content */
     gap: 20px;
-    width: 70%;
+    width: 75%;
     margin: 1em auto;
     padding-bottom: 1em;
   }
   
    
+/* Navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 98%;
+  height: 65px;
+  background-color: #edece9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1em;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  z-index: 999;
+  
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  
+}
+
+.navbar-logo-img {
+  height: 120px; /* Keep your size */
+  object-fit: contain;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.navbar-links a {
+  text-decoration: none;
+  color: #2b2b2b;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.navbar-links a:hover {
+  color: #f9d007;
+}
+
+.profile-dropdown {
+  position: relative;
+  display: inline-block;
+  margin-left: 1em;
+}
+
+.profile-icon {
+  height: 40px;
+  width: 40px;
+  cursor: pointer;
+  
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  background-color: #fff;
+  min-width: 120px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  z-index: 1000;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.dropdown-menu a {
+  color: #000;
+  padding: 10px;
+  text-decoration: none;
+  display: block;
+  font-weight: normal;
+}
+
+.dropdown-menu a:hover {
+  background-color: #f0f0f0;
+}
+
+/* Show menu on hover */
+.profile-dropdown:hover .dropdown-menu {
+  display: block;
+}
+
 
 .foodDetails{
    grid-row: 1/2;
@@ -134,52 +121,117 @@ html, body {
    justify-self: center;
 
 }
-
-
-.foodimg{
-    height: 300px;
-    width: 300px;
-    grid-row: 1/2;
-    grid-column: 2/4;
-    align-self: center;
-   justify-self: center;
-
+.foodDetails h2 {
+  font-size: 2.5rem;
+  line-height: 1.3;
+  font-weight: bold;
+  color: #793f1a;
+  margin-bottom: 0.5em;
 }
-.foodimg img{
-    height: 100%;
-    width: 100%;
+
+.foodDetails p {
+  font-size: 0.9rem;
+  margin-bottom: 0.3em;
 }
+
+
+
+.foodimg {
+  position: relative;
+  height: 400px;
+  width: 300px;
+  grid-row: 1/2;
+  grid-column: 2/4;
+  align-self: center;
+  justify-self: center;
+}
+
+
+.foodimg::before {
+  content: "";
+  position: absolute;
+  top:0px;             /* Slight down offset */
+  left: -20px;           /* Horizontal offset for the "peek" */
+  height: 90%;           /* Not full height, mimics the gap shown */
+  width: 20px;           /* Thickness of the beige bar */
+  background-color: #f4e1a1;
+  z-index: 0;            /* Behind the image */
+  border-radius: 3px;    /* Optional: soft edges like your reference */
+}
+
+.foodimg img {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  z-index: 1;            /* Above the pseudo-element */
+  object-fit: cover;
+  display: block;
+}
+
+
+
 
 .ingredients{
     grid-column:1/3 ;
     grid-row: 2/3;
     justify-self: center;
     margin-right: 200px;
+    margin-top: 20px;
     
     
     
 }
+.ingredients ul {
+  list-style-type: disc;
+  padding-left: 1.5em;
+}
+
+.ingredients li {
+  margin-bottom: 0.4em;
+  font-size: 0.95rem;
+}
+
 
 .instructions{
     grid-column: 2/4;
     grid-row: 2/3;
-    align-self: center;
+    align-self: start;
     justify-self: center;
+    margin-top: 20px;
     margin-left: 100px;
     margin-right: 100px;
 }
+.instructions ul {
+  padding-left: 1.5em;
+  line-height: 1.6;
+  list-style-type: disc;
+}
+
+.instructions li {
+  margin-bottom: 1em;
+  font-size: 0.95rem;
+}
+
+
+
+.ingredients h3, .instructions h3 {
+  font-size: 1.4rem;
+  font-weight: bold;
+  display: inline;
+  background: linear-gradient(to top, #f4e1a1 45%, transparent 40%);
+}
+
 
 .yt{
-    grid-column: 3/4;
+    grid-column: 1/2;
     grid-row: 3/4;
-    align-self: center;
-    justify-content: center;
+    align-self: start;
+    justify-self: end;
 }
 .full-recipe{
     grid-column: 2/3;
     grid-row: 3/4;
-    align-self: center;
-    justify-content: center;
+    align-self: start;
 }
 
 /*.nav{
